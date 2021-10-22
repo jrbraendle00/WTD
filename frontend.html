@@ -1,1 +1,49 @@
+<!DOCTYPE html>
+<html>
+<title>WTD - "what to do"</title>
+<body>
+    <h1>WTD</h1>
+    <div class="alltask">
+       <h2 class="tasklist">My To-Do Lists</h2>
+       <ul class="tasks">
+           <li class="active">Chores</li>
+           <li>Grocery</li>
+           <li>School</li>
+       </ul>
 
+       <form action="">
+           <input 
+           type="text"
+           class="new list"
+           placeholder="new list name"
+           aria-label="new list name"
+           />
+           <button class="listbutt" 
+           aria-label="create new list">+</button>
+       </form>
+    </div> 
+    <div class="wtdlist">
+        <div class="wtd-header">
+            <h2 class="list-title">Chores</h2>
+            <p class="count">4 tasks remaining</p>
+
+        </div>
+        <div class="wtd-body">
+            <div class="tasks">
+                <div class="task">
+                    <input type="checkbox"
+                    id= "task1" />
+                    <label for="task1">
+                        take out trash
+                    </label>
+                </div>
+            </div>
+
+            <div class="newer-tasks"></div>
+
+            <div class="remove-tasks"></div>
+        </div>
+    </div>
+    
+</body>
+</html>
