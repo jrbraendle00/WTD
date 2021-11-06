@@ -2,24 +2,38 @@
 <html>
 <title>WTD - "what to do"</title>
 <body>
+    <style>
+        body {
+          background-color: lightblue;
+          text-align: center;
+        }
+        
+        h1 {
+          color: rgb(0, 0, 0);
+          text-align: center;
+        }
+        
+        p {
+          font-family: verdana;
+          font-size: 20px;
+          
+        }
+        </style>
     <h1>WTD</h1>
     <div class="alltask">
        <h2 class="tasklist">My To-Do Lists</h2>
-       <ul class="tasks">
-           <li class="active">Chores</li>
-           <li>Grocery</li>
-           <li>School</li>
+       <ul class="tasks" style="list-style-type:none">
+           <li class="active"><button class="listbutt" aria-label="create new list">Chores</button>
+            <button class="listbutt" aria-label="create new list">x</button></li>
+           <li><button class="listbutt" aria-label="create new list">Grocery</button>
+            <button class="listbutt" aria-label="create new list">x</button></li>
+           <li><button class="listbutt" aria-label="create new list">School</button>
+            <button class="listbutt" aria-label="create new list">x</button></li>
        </ul>
 
        <form action="">
-           <input 
-           type="text"
-           class="new list"
-           placeholder="new list name"
-           aria-label="new list name"
-           />
-           <button class="listbutt" 
-           aria-label="create new list">+</button>
+           <input type="text" class="new list" placeholder="new list name" aria-label="new list name"/>
+           <button class="listbutt" aria-label="create new list">+</button>
        </form>
     </div> 
     <div class="wtdlist">
@@ -31,11 +45,12 @@
         <div class="wtd-body">
             <div class="tasks">
                 <div class="task">
-                    <input type="checkbox"
-                    id= "task1" />
-                    <label for="task1">
-                        take out trash
-                    </label>
+                    <input type="checkbox" id="task1">
+                    <label for="task1"> take out trash</label><br><br>
+                    <form action="">
+                        <input type="text" class="new task" placeholder="new task" aria-label="new task"/>
+                        <button class="listbutt" aria-label="create new task">+</button>
+                    </form>
                 </div>
             </div>
 
@@ -47,3 +62,5 @@
     
 </body>
 </html>
+
+
