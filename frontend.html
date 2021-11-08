@@ -23,11 +23,11 @@
     <div class="alltask">
        <h2 class="tasklist">My To-Do Lists</h2>
        <ul class="tasks" style="list-style-type:none">
-           <li class="active"><button class="listbutt" aria-label="create new list">Chores</button>
+           <li class="active"><button id="listBtn1" class="listbutt" aria-label="create new list" onclick="getList(this)">Chores</button>
             <button class="listbutt" aria-label="create new list">x</button></li>
-           <li><button class="listbutt" aria-label="create new list">Grocery</button>
+           <li><button id="listBtn2" class="listbutt" aria-label="create new list" onclick="getList(this)">Grocery</button>
             <button class="listbutt" aria-label="create new list">x</button></li>
-           <li><button class="listbutt" aria-label="create new list">School</button>
+           <li><button id="listBtn3" class="listbutt" aria-label="create new list" onclick="getList(this)">School</button>
             <button class="listbutt" aria-label="create new list">x</button></li>
        </ul>
 
@@ -38,7 +38,7 @@
     </div> 
     <div class="wtdlist">
         <div class="wtd-header">
-            <h2 class="list-title">Chores</h2>
+            <h2 id="listName" class="list-title">Chores</h2>
             <p class="count">4 tasks remaining</p>
 
         </div>
@@ -59,7 +59,7 @@
             <div class="remove-tasks"></div>
         </div>
     </div>
-    
+    <script src="backend.js"></script>
 </body>
 </html>
 
