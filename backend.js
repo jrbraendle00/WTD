@@ -1,3 +1,24 @@
+window.addEventListener('load', () => {
+    const listForm = document.querySelector("#task-list-form");
+    const listInput = document.querySelector("#task-list-input");
+    const taskForm = document.querySelector("#tasks-form");
+    const taskInput = document.querySelector("#task-input");
+    const listElement = document.querySelector("#lists");
+
+    listForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const listName = listInput.value;
+
+        if (!listName) {
+            alert("Please fill out the list name");
+        } else {
+            console.log(listName);
+        }
+    })
+})
+
+
 //Arrays to store lists and tasks temporarily
 let todoLists = [];
 let todoTasks = [];
