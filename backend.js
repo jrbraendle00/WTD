@@ -16,6 +16,15 @@ window.addEventListener('load', () => {
             console.log(listName);
         }
     })
+
+    taskForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const taskName= taskInput.value;
+        if (taskName !== ""){
+            addTask(taskName);
+            taskInput.value='';
+        }
+    })
 })
 
 
@@ -108,8 +117,32 @@ function Task(text) {
     this.edit = function() {
         //...
     }
-}    
-
+}  
+function showTask(todo){
+    const list= document.querySelector('.taskSpace');
+    const isChecked= todo.checked ? 'done': '';
+    const element= document.createElement("li");
+    element.setAttribute('class', `todo-item ${isChecked}`);
+    element.setAttribute('data-key', todo.id);
+    element.innerHTML= `
+    <input id="${todo.id}" type="checkbox"/>
+    <label for="${todo.id}" class="check"></label>
+    <span>${todo.text}</span>
+    <button>x</button>
+    `;
+list.append(element);
+}  
+function addTask(text)
+{
+    const todo={
+        text,
+        checked: false,
+        id: Date.now(),
+    };
+    todoTasks.push(todo);
+    console.log(todoTasks);
+    showTask(todo);
+}
 function getList(btn) {
     const listName = document.getElementById(btn.id).innerHTML;
     document.getElementById('listName').innerHTML = listName;
