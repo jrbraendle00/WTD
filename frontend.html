@@ -1,66 +1,83 @@
 <!DOCTYPE html>
 <html>
 <title>WTD - "what to do"</title>
+<link rel="stylesheet" href="WTD.css">
 <body>
-    <style>
-        body {
-          background-color: lightblue;
-          text-align: center;
-        }
-        
-        h1 {
-          color: rgb(0, 0, 0);
-          text-align: center;
-        }
-        
-        p {
-          font-family: verdana;
-          font-size: 20px;
-          
-        }
-        </style>
-    <h1>WTD</h1>
-    <div id="lists" class="alltask">
-       <h2 class="tasklist">My To-Do Lists</h2>
-       <ul class="tasks" style="list-style-type:none">
-           <li class="active"><button id="listBtn1" class="listbutt" aria-label="create new list" onclick="getList(this)">Chores</button>
-            <button class="listbutt" aria-label="create new list">x</button></li>
-           <li><button id="listBtn2" class="listbutt" aria-label="create new list" onclick="getList(this)">Grocery</button>
-            <button class="listbutt" aria-label="create new list">x</button></li>
-           <li><button id="listBtn3" class="listbutt" aria-label="create new list" onclick="getList(this)">School</button>
-            <button class="listbutt" aria-label="create new list">x</button></li>
+    
+    <h1 class="title">WTD</h1>
+    <div class="alltask">
+       <h2 class="tasklist-title">My To-Do Lists</h2>
+       <ul class="tasklist" >
+        <li class="activelist">Chores</li>
+        <li>Grocery</li>
+        <li>School</li>
        </ul>
 
-       <form id="task-list-form" action="">
-           <input type="text" id="task-list-input" class="new list" placeholder="new list name" aria-label="new list name"/>
-           <button class="listbutt" aria-label="create new list">+</button>
+       <form action="">
+           <input 
+           type="text"
+           class="new list"
+           placeholder="new list name"
+           aria-label="new list name"
+           />
+           <button class="listbutt" 
+           aria-label="create new list">+</button>
        </form>
     </div> 
-    
     <div class="wtdlist">
         <div class="wtd-header">
-            <h2 id="listName" class="list-title">Chores</h2>
-            <p class="count">4 tasks remaining</p>
+            <h2 class="list-title">Chores</h2>
+            <p class="count">3 tasks remaining</p>
 
         </div>
         <div class="wtd-body">
             <div class="tasks">
                 <div class="task">
-                    <ul class="taskSpace"></ul>
-                    <form id="tasks-form" action="">
-                        <input type="text" id="task-input" class="new task" placeholder="new task" aria-label="new task"/>
-                        <button class="listbutt" aria-label="create new task">+</button>
-                    </form>
+                    <input type="checkbox"
+                    id= "task1" />
+                    <label for="task1">
+                        <span class="custom-checkbox"></span>
+                        take out trash
+                    </label>
                 </div>
+                <!--closed task1--->
+                <div class="task">
+                    <input type="checkbox"
+                    id= "task2" />
+                    <label for="task2">
+                        wash the dishes
+                    </label>
+                </div>
+                <!---closed task2-->
+                <div class="task">
+                    <input type="checkbox"
+                    id= "task3" />
+                    <label for="task3">
+                        clean bedroom
+                    </label>
+                </div>
+                <!---closed task3-->
             </div>
 
-            <div class="newer-tasks"></div>
+            <div class="newer-tasks">
+                <form action="">
+                    <input 
+                    type="text"
+                    class="new task"
+                    placeholder="new task name"
+                    aria-label="new task name"
+                    />
+                    <button class="taskbutt" 
+                    aria-label="create new list">+</button>
+                </form>
+            </div>
 
-            <div class="remove-tasks"></div>
+            <div class="remove-tasks">
+                <button class="delete btn">Clear completed task</button>
+                <button class="delete btn">Delete list</button>
+            </div>
         </div>
     </div>
-    <script src="backend.js"></script>
+<script src="backend.js"></script>
 </body>
 </html>
-
-
