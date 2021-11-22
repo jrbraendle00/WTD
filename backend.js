@@ -1,30 +1,82 @@
 window.addEventListener('load', () => {
     const listForm = document.querySelector("#task-list-form");
     const listInput = document.querySelector("#task-list-input");
-    const taskForm = document.querySelector("#tasks-form");
-    const taskInput = document.querySelector("#task-input");
+    //const taskForm = document.querySelector("#tasks-form");
+    //const taskInput = document.querySelector("#task-input");
     const listElement = document.querySelector("#lists");
 
     listForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const listName = listInput.value;
+        const list_text = listInput.value;
 
-        if (!listName) {
+        if (!list_text) {
             alert("Please fill out the list name");
-        } else {
-            console.log(listName);
-        }
+        } 
+
+        const newList = document.createElement("div");
+        newList.classList.add("new-lists");
+
+        const listContent = document.createElement("div");
+        listContent.classList.add("content");
+
+        newList.appendChild(listContent);
+
+        const list_Input_Element = document.createElement("input");
+        list_Input_Element.classList.add("text");
+        list_Input_Element.type = "text";
+        list_Input_Element.value = list_text;
+        list_Input_Element.setAttribute("readonly", "readonly");
+
+        listContent.appendChild(list_Input_Element);
+
+        const lists_Actions_Element = document.createElement("div");
+        lists_Actions_Element.classList.add("actions");
+
+        const lists_Edit_Element = document.createElement("button");
+        lists_Edit_Element.classList.add("editbtn");
+        lists_Edit_Element.innerHTML = "Edit";
+
+        const lists_Delete_Element = document.createElement("button");
+        lists_Delete_Element.classList.add("deletebtn");
+        lists_Delete_Element.innerHTML = "Delete";
+
+        lists_Actions_Element.appendChild(lists_Edit_Element);
+        lists_Actions_Element.appendChild(lists_Delete_Element);
+
+        newList.appendChild(lists_Actions_Element);
+
+        listElement.appendChild(newList);
+
+        listInput.value = "";
+
+        lists_Edit_Element.addEventListener('click', () => {
+            if (lists_Edit_Element.innerText.toLowerCase() == "edit") {
+                list_Input_Element.removeAttribute("readonly");
+                list_Input_Element.focus();
+                lists_Edit_Element.innerText = "Save";
+            } else {
+                list_Input_Element.setAttribute("readonly", "readonly");
+                lists_Edit_Element.innerText = "Edit";
+            }
+            
+        })
+
+        lists_Delete_Element.addEventListener('click', () => {
+            listElement.removeChild(newList);
+            
+        })
+
     })
 
-    taskForm.addEventListener("submit", (e) => {
+    /*taskForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const taskName= taskInput.value;
         if (taskName !== ""){
             addTask(taskName);
             taskInput.value='';
         }
-    })
+    })*/
 })
 
 /*

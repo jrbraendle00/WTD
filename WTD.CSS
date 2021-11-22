@@ -65,6 +65,29 @@ body {
   font-weight: 900;
   margin-right: 0.25em;
 }
+
+.editbtn{
+  cursor: pointer;
+  color: inherits;
+  padding: 0;
+  background: 0;
+  border: 0;
+  font-size: 1.0rem;
+  font-weight: 900;
+  margin-right: 0.25em;
+}
+
+.deletebtn{
+  cursor: pointer;
+  color: inherits;
+  padding: 0;
+  background: 0;
+  border: 0;
+  font-size: 1.0rem;
+  font-weight: 900;
+  margin-right: 0.25em;
+}
+
 .taskbutt{
   cursor: pointer;
   color: inherits;
