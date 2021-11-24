@@ -2,67 +2,50 @@
 <html>
 <title>WTD - "what to do"</title>
 <link rel="stylesheet" href="WTD.css">
+
 <body>
-    
     <h1 class="title">WTD</h1>
     
     <div class="alltask">
-        <h2 class="tasklist-title">My To-Do Lists</h2>
-       <!--<ul class="tasklist" >
-        <li class="activelist">Chores</li>
-        <li>Grocery</li>
-        <li>School</li>
-       </ul>-->
+       <h2 class="tasklist-title">My To-Do Lists</h2>
+       <ul class="tasklist" id="lists">
+        <li class="list-name active">Chores</li>
+        <li class="list-name">Grocery</li>
+        <li class="list-name">School</li>
+       </ul>
 
-       <form action="" id="task-list-form">
-           <input 
-                type="text"
-                id="task-list-input"
-                class="new list"
-                placeholder="new list name"
-                aria-label="new list name"/>
-           <input
-                type="submit" 
-                class="listbutt" 
-                aria-label="create new list"
-                value="+"/>
-       </form>
+       <form action="" id="list-form">
+        <input
+            id="list-input"
+            type="text"
+            class="new list"
+            placeholder="new list name"
+            aria-label="new list name"
+        />
+        <button 
+            class="listbutt" 
+            aria-label="create new list">+</button>
+    </form>
+ </div> 
 
-       <div id="lists">
-           <!--new list elements will go here with the following structure
-            <div id="new-lists">
-                <div class="content">
-                    <input
-                        type="text"
-                        class="text"
-                        value="A new task"
-                        readonly>
-                </div>
-                <div class="actions">
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </div>
-            </div> -->
-       </div>
+ <div class="wtdlist">
+    <div class="wtd-header">
+        <h2 class="list-title">Chores</h2>
+            <p class="count">3 tasks remaining</p>
     </div>
     
-    
-    <div class="wtdlist">
-        <div class="wtd-header">
-            <h2 class="list-title">Chores</h2>
-            <p class="count">3 tasks remaining</p>
-
-        </div>
-        <div class="wtd-body">
-            <div class="tasks">
-                <div class="task">
-                    <input type="checkbox"
-                    id= "task1" />
-                    <label for="task1">
-                        <span class="custom-checkbox"></span>
+    <div class="wtd-body">
+        <div class="tasks">
+            <div class="task"> 
+                <input 
+                    type="checkbox"
+                    id= "task1" 
+                />
+                <label for="task1">
+                    <span class="custom-checkbox"></span>
                         take out trash
-                    </label>
-                </div>
+                </label>
+            </div>
                 <!--closed task1--->
                 <div class="task">
                     <input type="checkbox"
@@ -80,27 +63,29 @@
                     </label>
                 </div>
                 <!---closed task3-->
-            </div>
-
+            </div>  
+            
             <div class="newer-tasks">
                 <form action="">
                     <input 
-                    type="text"
-                    class="new task"
-                    placeholder="new task name"
-                    aria-label="new task name"
+                        type="text"
+                        class="new task"
+                        placeholder="new task name"
+                        aria-label="new task name"
                     />
-                    <button class="taskbutt" 
-                    aria-label="create new list">+</button>
+                    <button 
+                        class="taskbutt" 
+                        aria-label="create new list">+</button>
                 </form>
             </div>
 
             <div class="remove-tasks">
                 <button class="delete btn">Clear completed task</button>
-                <button class="delete btn">Delete list</button>
+                <button id="delete-list-btn" class="delete btn">Delete list</button>
             </div>
         </div>
     </div>
+
 
     <script src="backend.js"></script>
 </body>
