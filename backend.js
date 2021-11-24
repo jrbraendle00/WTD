@@ -1,89 +1,83 @@
-window.addEventListener('load', () => {
-    const listForm = document.querySelector("#task-list-form");
-    const listInput = document.querySelector("#task-list-input");
-    //const taskForm = document.querySelector("#tasks-form");
-    //const taskInput = document.querySelector("#task-input");
-    const listElement = document.querySelector("#lists");
+const listsElement = document.querySelector('#lists');
+const listForm = document.querySelector('#list-form');
+const listInput = document.querySelector('#list-input');
+const deleteListBtn = document.querySelector('#delete-list-btn');
 
-    listForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const list_text = listInput.value;
+const LOCAL_STORAGE_LIST_KEY = 'todo.lists'; //key for local storage where we store our lists
+const LOCAL_STORAGE_CURRENT_LIST_ID_KEY = 'task.currentListId';
 
-        if (!list_text) {
-            alert("Please fill out the list name");
-        } 
+let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || [];
+let currentListId = localStorage.getItem(LOCAL_STORAGE_CURRENT_LIST_ID_KEY);
 
-        const newList = document.createElement("div");
-        newList.classList.add("new-lists");
-
-        const listContent = document.createElement("div");
-        listContent.classList.add("content");
-
-        newList.appendChild(listContent);
-
-        const list_Input_Element = document.createElement("input");
-        list_Input_Element.classList.add("text");
-        list_Input_Element.type = "text";
-        list_Input_Element.value = list_text;
-        list_Input_Element.setAttribute("readonly", "readonly");
-
-        listContent.appendChild(list_Input_Element);
-
-        const lists_Actions_Element = document.createElement("div");
-        lists_Actions_Element.classList.add("actions");
-
-        const lists_Edit_Element = document.createElement("button");
-        lists_Edit_Element.classList.add("editbtn");
-        lists_Edit_Element.innerHTML = "Edit";
-
-        const lists_Delete_Element = document.createElement("button");
-        lists_Delete_Element.classList.add("deletebtn");
-        lists_Delete_Element.innerHTML = "Delete";
-
-        lists_Actions_Element.appendChild(lists_Edit_Element);
-        lists_Actions_Element.appendChild(lists_Delete_Element);
-
-        newList.appendChild(lists_Actions_Element);
-
-        listElement.appendChild(newList);
-
-        listInput.value = "";
-
-        lists_Edit_Element.addEventListener('click', () => {
-            if (lists_Edit_Element.innerText.toLowerCase() == "edit") {
-                list_Input_Element.removeAttribute("readonly");
-                list_Input_Element.focus();
-                lists_Edit_Element.innerText = "Save";
-            } else {
-                list_Input_Element.setAttribute("readonly", "readonly");
-                lists_Edit_Element.innerText = "Edit";
-            }
-            
-        })
-
-        lists_Delete_Element.addEventListener('click', () => {
-            listElement.removeChild(newList);
-            
-        })
-
-    })
-
-    /*taskForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const taskName= taskInput.value;
-        if (taskName !== ""){
-            addTask(taskName);
-            taskInput.value='';
-        }
-    })*/
+listsElement.addEventListener('click', e => {
+    if (e.target.tagName.toLowerCase() === 'li') { //if we click on an li element
+        currentListId = e.target.dataset.listId;
+        save();
+        getLists();
+    }
 })
 
-/*
-//Arrays to store lists and tasks temporarily
-let todoLists = [];
-let todoTasks = [];
+deleteListBtn.addEventListener('click', e => {
+    lists = lists.filter(list => list.id != currentListId);
+    currentListId = null;
+    save();
+    getLists();
+})
 
+listForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const listName = listInput.value;
+    
+    if (!listName) {
+        alert("Please fill out the list name");
+        return
+    }
+
+    const newList = new List(listName);
+    listInput.value = null;
+    lists.push(newList);
+    getLists();
+    save();
+})
+
+//List Object Constructor
+function List(name) {
+    this.id = Date.now().toString();
+    this.title = name;
+    this.tasks = [];
+}
+
+//Saves our lists into local storage so they don't disappear when page is refreshed
+function save() {
+    localStorage.setItem(LOCAL_STORAGE_LIST_KEY, JSON.stringify(lists));
+    localStorage.setItem(LOCAL_STORAGE_CURRENT_LIST_ID_KEY, currentListId);
+}
+
+function getLists() {
+    clearLists(listsElement);
+    console.log(lists);
+    lists.forEach(list => {
+        const listElement = document.createElement('li');
+        listElement.dataset.listId = list.id;
+        listElement.classList.add("list-name");
+        listElement.innerText = list.title;
+
+        if (list.id === currentListId) {
+            listElement.classList.add('active');
+        }    
+        listsElement.appendChild(listElement);
+    })
+}
+
+function clearLists(element) {
+    while(element.firstChild) {
+        element.removeChild(element.firstChild)
+    }
+}
+
+getLists(); 
+
+/*
 //List, student and task objects
 function Student() {
     let studentId = "";
