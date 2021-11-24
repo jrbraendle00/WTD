@@ -28,15 +28,15 @@
     </form>
  </div> 
 
- <div class="wtdlist">
+ <div class="wtdlist" id="tasks-list">
     <div class="wtd-header">
-        <h2 class="list-title">Chores</h2>
-            <p class="count">3 tasks remaining</p>
+        <h2 class="list-title" id="list-name"></h2>
+            <p class="count" id="tasks-count"></p>
     </div>
     
     <div class="wtd-body">
-        <div class="tasks">
-            <div class="task"> 
+        <div class="tasks" id="tasks">
+            <!--<div class="task"> 
                 <input 
                     type="checkbox"
                     id= "task1" 
@@ -45,29 +45,30 @@
                     <span class="custom-checkbox"></span>
                         take out trash
                 </label>
-            </div>
+            </div> -->
                 <!--closed task1--->
-                <div class="task">
+                <!--<div class="task">
                     <input type="checkbox"
                     id= "task2" />
                     <label for="task2">
                         wash the dishes
                     </label>
-                </div>
+                </div>-->
                 <!---closed task2-->
-                <div class="task">
+                <!--<div class="task">
                     <input type="checkbox"
                     id= "task3" />
                     <label for="task3">
                         clean bedroom
                     </label>
-                </div>
+                </div>-->
                 <!---closed task3-->
-            </div>  
+        </div>  
             
             <div class="newer-tasks">
-                <form action="">
+                <form action="" id="task-form">
                     <input 
+                        id="task-input"
                         type="text"
                         class="new task"
                         placeholder="new task name"
@@ -80,12 +81,22 @@
             </div>
 
             <div class="remove-tasks">
-                <button class="delete btn">Clear completed task</button>
+                <button class="delete btn" id="delete-tasks-btn">Clear completed task</button>
                 <button id="delete-list-btn" class="delete btn">Delete list</button>
             </div>
         </div>
     </div>
 
+    <template id="task-outline">
+        <div class="task"> 
+            <input 
+                type="checkbox"
+            />
+            <label>
+                <span class="custom-checkbox"></span>
+            </label>
+        </div>
+    </template>
 
     <script src="backend.js"></script>
 </body>
