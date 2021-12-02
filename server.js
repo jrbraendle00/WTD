@@ -1,19 +1,15 @@
 const express = require('express');
 const app = express();
-
 const path = require('path');
-
-const port = process.env.PORT || 3000;
-
+const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
-
+const cookieParser = require('cookie-parser')
 app.use(express.static('public'));
-
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
+app.use(cookieParser());
 var sql = require('mysql');
-//mysql://b445599726c648:18e985fb@us-cdbr-east-04.cleardb.com/heroku_d5fc58195132b53?reconnect=true
+const { resolve } = require('path');
 var config = sql.createPool({
     host: 'us-cdbr-east-04.cleardb.com',
     user: 'b445599726c648',
@@ -25,66 +21,171 @@ module.exports = config;
 
 //GET ROUTES
 app.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/login.html'));
+
+    let username = req.cookies.username;
+
+    if (username == null) {
+        //res.sendFile(path.join(__dirname + '/public/login.html'));
+        return res.redirect('/login');
+
+    } else {
+        console.log(username);
+        return res.redirect('/lists');
+    }
+
+
+});
+
+app.get('/login', function (req, res) {
+    let username = req.cookies.username;
+
+
+    if (username == ""){
+        return res.redirect('/login');
+    }
+    if (username != null) {
+
+        return res.redirect('/lists');
+        
+
+    }
+    return res.sendFile(path.join(__dirname + '/public/login.html'));
+
+
+});
+
+app.get('/logout', function (req, res) {
+    res.clearCookie("username");
+    return res.redirect('/login');
+
+
 });
 
 app.get('/lists', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/frontend.html'));
+
+    let username = req.cookies.username;
+
+    if (username == null) {
+
+        return res.redirect('/login');
+        
+    }
+
+    return res.sendFile(path.join(__dirname + '/public/frontend.html'));
+
 });
 
 app.get('/newuser', function (req, res) {
-    res.sendFile(path.join(__dirname + '/public/newuser.html'));
+    return res.sendFile(path.join(__dirname + '/public/newuser.html'));
 });
 
-
-
-//POST ROUTES
-
-//defualt homepage is the login screen
-app.post('/', (req, res) => {
-
-    var sql = "SELECT COUNT(*) FROM user WHERE username='" + req.body.username + "' AND password='" + req.body.password + "'";
+/* app.get('/listdata', function(req, res) {
+    var sql = "SELECT * FROM task_list WHERE Assoc_User='" + req.cookies.username + "'";
+    
+    var arr = [];
 
     config.query(sql, function (err, result) {
         if (err) throw err;
 
-        if (result[0]['COUNT(*)'] == 1) {
-            console.log('valid user');
+        Object.keys(result).forEach(function(key) {
+            var row = result[key];
 
-            res.redirect('/lists');
-        } else {
-            console.log('invalid user');
+            arr.push(row);
+        })
+        console.log(arr);
 
-            res.redirect('/');
-        }
-        //console.log("record added");
+        res.json(arr);
     });
+});
 
+app.get('/taskdata', function(req, res) {
+    var sql = "SELECT * FROM task WHERE Assoc_Task_List_ID='" +  + "'";
+    config.query(sql, function (err, result) {
+        if (err) throw err;
+        res.json(result);
+    });
+}); */
+
+//POST ROUTES
+
+//defualt homepage is the login screen
+app.post('/login', (req, res) => {
+
+    var sql = "SELECT COUNT(*) FROM user WHERE username='" + req.body.username + "' AND password='" + req.body.password + "'";
+    try {
+
+        config.query(sql, function (err, result) {
+
+            if (result[0]['COUNT(*)'] == 1) {
+                console.log('valid user');
+
+                res.cookie('username', req.body.username);
+
+                return res.redirect('/lists');
+                
+            } else {
+                console.log('invalid user');
+
+                return res.redirect('/');
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
 
 });
 
 app.post('/newuser', async (req, res) => {
 
+    if (req.body.username == ""){
+        return res.redirect('/newuser');
+    }
     var sql = "INSERT INTO user (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
-    config.query(sql, function (err, result) {
-        if (err) throw err;
-        //console.log("record added");
-    });
 
-    res.redirect('/');
-    //send to page after account is successfully created
+    try {
+        config.query(sql, function (err, result) {
+        });
+
+    } catch (error) {
+
+        console.log(error);
+    }
+
+    return res.redirect('/');
 });
 
-/* 
-app.post('/lists', async(req, res) =>{
-    
-    var sql = "INSERT INTO task_list (Task_List_Name, Assoc_User) VALUES ('" + req.body.username + "', 'testuser')";
-    config.query(sql, function(err, result) {
-        if (err) throw err;
-        //console.log("record added");
-    });
 
-    res.redirect('/');
+app.post('/lists', async (req, res) => {
+
+    const data = req.body;
+    try {
+        if (JSON.stringify(data).includes('newListID')) {
+            listID = data.newListID;
+            listName = data.newListTitle;
+            AssocUser = req.cookies.username;
+
+            var sql = "INSERT INTO task_list (Task_List_ID, Task_List_Name, Assoc_User) VALUES ('" + listID + "', '" + listName + "', '" + AssocUser + "')";
+            config.query(sql, function (err, result) {
+            });
+        }
+
+        if (JSON.stringify(data).includes('listToDelete')) {
+            listID = data.listToDelete;
+
+            var sql = "DELETE FROM task_list WHERE Task_List_ID='" + listID + "'";
+            config.query(sql, function (err, result) {
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+
+    //follow the same process for if task data. 
+
+    return res.end();
+
 });
- */
+
 app.listen(port);

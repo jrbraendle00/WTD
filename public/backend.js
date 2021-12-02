@@ -17,8 +17,10 @@ const LIST_KEY = 'todo.lists';
 const CURRENT_LIST_ID_KEY = 'task.currentListId';
 
 //Get lists from local storage using key and convert to a js object or set to an empty array if there are no existing lists in local storage.
-let lists = JSON.parse(localStorage.getItem(LIST_KEY)) || []; 
 
+//query lists from db using the keys associated with a user
+//lists should be a json objects array of all thje lists attached to a specified user
+let lists = JSON.parse(localStorage.getItem(LIST_KEY)) || []; 
 let currentListId = localStorage.getItem(CURRENT_LIST_ID_KEY);
 
 //Event Listeners
@@ -54,6 +56,7 @@ deleteTasksBtn.addEventListener('click', e => {
 //Delete a list when delete list button is clicked
 deleteListBtn.addEventListener('click', e => {
     lists = lists.filter(list => list.id !== currentListId); //Return a new list without the deleted list (the one that is currently selected)
+    saveListDeletion(currentListId);
     currentListId = null; //Set id to null since we no longer have a currently selected list
     save();
     displayTasks();
@@ -74,6 +77,7 @@ listForm.addEventListener('submit', e => {
     listInput.value = null; //clears input box
     lists.push(newList);
     save();
+    saveNewList(newList.id, newList.title);
     displayTasks();
 })
 
@@ -114,6 +118,52 @@ function Task(text) {
 function save() {
     localStorage.setItem(LIST_KEY, JSON.stringify(lists)); //save list to local storage
     localStorage.setItem(CURRENT_LIST_ID_KEY, currentListId);
+
+}
+function saveListDeletion(listToDelete) {
+
+    const listData = {listToDelete};
+
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(listData),
+    }
+
+    fetch('/lists', options);
+
+} 
+function saveNewList(newListID, newListTitle) {
+
+    const newListData = {newListID, newListTitle};
+
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newListData),
+    }
+
+    fetch('/lists', options);
+
+}
+function saveNewTask(newTaskID, newTaskTitle) {
+
+    const newTaskData = {newTaskID, newTaskTitle};
+
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newTaskData),
+    }
+
+    fetch('/lists', options);
+
 }
 
 function displayTasks() { 
