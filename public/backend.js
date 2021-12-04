@@ -23,43 +23,145 @@ const CURRENT_LIST_ID_KEY = 'task.currentListId';
 let lists = JSON.parse(localStorage.getItem(LIST_KEY)) || []; 
 let currentListId = localStorage.getItem(CURRENT_LIST_ID_KEY);
 
+getListData();
+
+async function getListData() {
+    const response = await fetch('/listdata');
+    const data = await response.json();
+    console.log(data);
+    
+
+    clearElement(listsElement);
+
+    for (item of data) {
+        const taskName = document.createElement('li');
+        taskName.textContent = `${item.Task_List_Name}`;
+        taskName.classList.add("list-name");
+        taskName.setAttribute('id', `${item.Task_List_ID}`);//as listid as the attribute id
+        document.getElementById('lists').append(taskName);
+
+        //getTaskData(item.Task_List_ID);
+        console.log(taskName.id);
+
+    }
+
+
+/* 
+    if (currentListId == null) { //If we don't have a list selected
+        //tasksListElement.style.display = 'none'; 
+        //deleteListBtn.style.display = 'none';
+        //deleteTasksBtn.style.display ='none';
+    } else { //display tasks element with current list info
+        tasksListElement.style.display = ''; 
+        deleteListBtn.style.display = '';
+        deleteTasksBtn.style.display ='';
+        //taskListTitle.innerText = currentListId.title;
+        //getTaskCount(currentListId);
+        clearElement(tasksElement);
+        //addTask(currentList);
+    }
+ */
+}
+async function getTaskData(listID) {
+
+    clearElement(tasksElement);
+
+    //getTaskCount(listID);
+
+    const taskData = { listID };
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData),
+    }
+
+    const response = await fetch('/taskdata', options);
+    const data = await response.json();
+    //console.log(data);
+    
+    taskListTitle.innerText = document.getElementById(listID).innerText;
+
+    for (item of data) {
+        const taskElement = document.importNode(taskOutline.content, true);
+
+        const task = document.createElement('div');
+        task.setAttribute('id', `${item.Task_ID}`);
+        task.classList.add('task');
+        const checkbox = taskElement.querySelector('input');
+        checkbox.id = `${item.Task_ID}`;
+        if (item.Complete == "1") {
+            checkbox.checked = true;
+        } else {
+            checkbox.checked = false;
+        }
+        const space = document.createElement('a');
+        space.textContent = '   ';
+        const label = taskElement.querySelector('label');
+        label.htmlFor = `${item.Task_ID}`;
+        label.textContent = `${item.Name}`;
+
+        task.append(checkbox,space, label);
+
+        tasksElement.appendChild(task);
+    }
+
+}
+
 //Event Listeners
 
 //highlight a list when it is clicked
 listsElement.addEventListener('click', e => {
     if (e.target.tagName.toLowerCase() === 'li') { //if the targeted element is an li element
-        currentListId = e.target.dataset.listId;
-        save();
-        displayTasks();
+        //currentListId = e.target.dataset.listId;
+        currentListId = e.target.id;
+        //save();
+        //displayTasks();
+
+        console.log(currentListId);
+
+        getTaskData(currentListId);
+
     }
 })
 
 //if we click on a task checkbox set task status to true and update the task count
 tasksElement.addEventListener('click', e => {
     if (e.target.tagName.toLowerCase() === 'input') { //if the targeted element is an input element
-        const currentList = lists.find(list => list.id === currentListId);
-        const currentTask = currentList.tasks.find(task => task.id === e.target.id);
-        currentTask.status = e.target.checked;
-        save();
-        getTaskCount(currentList);
+        //const currentList = lists.find(list => list.id === currentListId);
+        //const currentTask = currentList.tasks.find(task => task.id === e.target.id);
+        //currentTask.status = e.target.checked;
+        //save();
+
+        currentTaskID = e.target.id;
+
+        taskStatus = e.target.checked;
+
+        saveCompleted(currentTaskID, taskStatus);
+
+        //getTaskCount(currentListId);
     }
 })
 
 //Delete all completed tasks
 deleteTasksBtn.addEventListener('click', e => {
-    const currentList = lists.find(list => list.id === currentListId);
-    currentList.tasks = currentList.tasks.filter(task => !task.status);
-    save();
-    displayTasks();
+    //const currentList = lists.find(list => list.id === currentListId);
+    //currentList.tasks = currentList.tasks.filter(task => !task.status);
+    //save();
+    //displayTasks();
+    saveTaskDeletion(currentListId);
 })
 
 //Delete a list when delete list button is clicked
 deleteListBtn.addEventListener('click', e => {
-    lists = lists.filter(list => list.id !== currentListId); //Return a new list without the deleted list (the one that is currently selected)
+    //lists = lists.filter(list => list.id !== currentListId); //Return a new list without the deleted list (the one that is currently selected)
     saveListDeletion(currentListId);
     currentListId = null; //Set id to null since we no longer have a currently selected list
-    save();
-    displayTasks();
+    //save();
+    //displayTasks();
+    getListData();
 })
 
 listForm.addEventListener('submit', e => {
@@ -76,9 +178,10 @@ listForm.addEventListener('submit', e => {
     const newList = new List(listName);
     listInput.value = null; //clears input box
     lists.push(newList);
-    save();
+    //save();
     saveNewList(newList.id, newList.title);
-    displayTasks();
+    //displayTasks();
+    clearElement(listsElement);
 })
 
 taskForm.addEventListener('submit', e => {
@@ -93,10 +196,12 @@ taskForm.addEventListener('submit', e => {
     //Create a new task object ans push it into the the currently selected list
     const newTask = new Task(taskText);
     taskInput.value = null;
-    const currentList = lists.find(list => list.id === currentListId);
-    currentList.tasks.push(newTask);
-    save();
-    displayTasks();
+    //const currentList = lists.find(list => list.id === currentListId);
+    //currentList.tasks.push(newTask);
+    //save();
+    //displayTasks();
+    saveNewTask(newTask.id, newTask.text, newTask.status);
+   //getTaskData(currentListId);
 })
 
 //List and Task Object Constructors
@@ -120,7 +225,7 @@ function save() {
     localStorage.setItem(CURRENT_LIST_ID_KEY, currentListId);
 
 }
-function saveListDeletion(listToDelete) {
+async function saveListDeletion(listToDelete) {
 
     const listData = {listToDelete};
 
@@ -132,10 +237,13 @@ function saveListDeletion(listToDelete) {
         body: JSON.stringify(listData),
     }
 
-    fetch('/lists', options);
+    await fetch('/lists', options);
+
+    //getListData();
+    //getTaskData(currentListId);
 
 } 
-function saveNewList(newListID, newListTitle) {
+async function saveNewList(newListID, newListTitle) {
 
     const newListData = {newListID, newListTitle};
 
@@ -147,12 +255,15 @@ function saveNewList(newListID, newListTitle) {
         body: JSON.stringify(newListData),
     }
 
-    fetch('/lists', options);
+    await fetch('/lists', options);
+
+    getListData();
+    //getTaskData(currentListId);
 
 }
-function saveNewTask(newTaskID, newTaskTitle) {
+async function saveNewTask(newTaskID, newTaskTitle, taskStatus) {
 
-    const newTaskData = {newTaskID, newTaskTitle};
+    const newTaskData = {newTaskID, newTaskTitle, taskStatus, currentListId};
 
     const options = {
         method: 'POST',
@@ -162,8 +273,41 @@ function saveNewTask(newTaskID, newTaskTitle) {
         body: JSON.stringify(newTaskData),
     }
 
-    fetch('/lists', options);
+    await fetch('/lists', options);
 
+    getTaskData(currentListId);
+
+}
+async function saveTaskDeletion(taskDeletionList){
+    
+    const listData = {taskDeletionList};
+
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(listData),
+    }
+
+    await fetch('/lists', options);
+
+    getTaskData(currentListId);
+
+}
+function saveCompleted(taskID, statusChange){
+
+    const changeData = {taskID, statusChange};
+
+    const options = {
+        method: 'POST',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(changeData),
+    }
+
+    fetch('/lists', options);
 }
 
 function displayTasks() { 
@@ -176,8 +320,8 @@ function displayTasks() {
         tasksListElement.style.display = 'none'; 
     } else { //display tasks element with current list info
         tasksListElement.style.display = ''; 
-        taskListTitle.innerText = currentList.title;
-        getTaskCount(currentList);
+        taskListTitle.innerText = currentListId.title;
+        //getTaskCount(currentListId);
         clearElement(tasksElement);
         addTask(currentList);
     }
@@ -198,10 +342,35 @@ function addTask(currentList) {
 }
 
 //get the number of unfinished tasks
-function getTaskCount (currentList) { 
-    const unfinishedTasks = currentList.tasks.filter(task => !task.status).length; //get the length of the list of tasks that are not complete
-    const taskText = unfinishedTasks === 1 ? "task" : "tasks";
-    tasksCounter.innerText = `${unfinishedTasks} ${taskText} remaining`;
+async function getTaskCount (currentListId) { 
+    //const unfinishedTasks = currentList.tasks.filter(task => !task.status).length; //get the length of the list of tasks that are not complete
+    //const taskText = unfinishedTasks === 1 ? "task" : "tasks";
+    //tasksCounter.innerText = `${unfinishedTasks} ${taskText} remaining`;
+
+    const taskData = { currentListId };
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData),
+    }
+
+    const response = await fetch('/taskdata', options);
+    const data = await response.json();
+    var uncompletedCount = 0;
+
+
+    for (item of data) {
+        if (item.Complete == 0){
+            uncompletedCount++;
+        }
+    }
+
+    const taskText = uncompletedCount === 1 ? "task" : "tasks";
+
+    tasksCounter.innerText = `${uncompletedCount} ${taskText} remaining`;
 }
 
 //Add a new list
@@ -221,7 +390,6 @@ function addList() {
     })
 }
 
-
 //remove all the children of an element
 function clearElement(element) {
     while(element.firstChild) { 
@@ -229,4 +397,4 @@ function clearElement(element) {
     }
 }
 
-displayTasks();
+//displayTasks();
