@@ -151,12 +151,27 @@ deleteTasksBtn.addEventListener('click', e => {
     //currentList.tasks = currentList.tasks.filter(task => !task.status);
     //save();
     //displayTasks();
+    if (currentListId == null){
+
+        alert("Please select a list");
+        return
+    }
+        
     saveTaskDeletion(currentListId);
+    
+
 })
 
 //Delete a list when delete list button is clicked
 deleteListBtn.addEventListener('click', e => {
     //lists = lists.filter(list => list.id !== currentListId); //Return a new list without the deleted list (the one that is currently selected)
+    if (currentListId == null){
+
+        alert("Please select a list");
+        return
+    }
+
+
     saveListDeletion(currentListId);
     currentListId = null; //Set id to null since we no longer have a currently selected list
     //save();
@@ -186,6 +201,13 @@ listForm.addEventListener('submit', e => {
 
 taskForm.addEventListener('submit', e => {
     e.preventDefault(); //stop page from refreshing when we submit form
+
+    if (currentListId == null){
+
+        alert("Please select a list");
+        return
+    }
+
     const taskText = taskInput.value;
     
     if (!taskText) {
