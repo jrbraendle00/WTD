@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const port = process.env.PORT ||3000; 
+const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
 app.use(express.static('public'));
@@ -40,13 +40,13 @@ app.get('/login', function (req, res) {
     let username = req.cookies.username;
 
 
-    if (username == ""){
+    if (username == "") {
         return res.redirect('/login');
     }
     if (username != null) {
 
         return res.redirect('/lists');
-        
+
 
     }
     return res.sendFile(path.join(__dirname + '/public/login.html'));
@@ -68,7 +68,7 @@ app.get('/lists', function (req, res) {
     if (username == null) {
 
         return res.redirect('/login');
-        
+
     }
 
     return res.sendFile(path.join(__dirname + '/public/frontend.html'));
@@ -79,20 +79,22 @@ app.get('/newuser', function (req, res) {
     return res.sendFile(path.join(__dirname + '/public/newuser.html'));
 });
 
-app.get('/listdata', function(req, res) {
+
+
+app.get('/listdata', function (req, res) {
     var sql = "SELECT * FROM task_list WHERE Assoc_User='" + req.cookies.username + "'";
-    
+
     config.query(sql, function (err, result) {
         if (err) throw err;
         res.json(result);
-    });  
+    });
 });
 
 
 //POST ROUTES
 
 //defualt homepage is the login screen
-app.post('/taskdata', function(req, res) {
+app.post('/taskdata', function (req, res) {
 
     const data = req.body;
 
@@ -103,6 +105,30 @@ app.post('/taskdata', function(req, res) {
         if (err) throw err;
         res.json(result);
     });
+});
+
+app.post('/checkusers', function (req, res) {
+    var sql = "SELECT COUNT(*) FROM user WHERE username='" + req.body.usr + "'";
+    try {
+
+        config.query(sql, function (err, result) {
+
+            if (result[0]['COUNT(*)'] == 1) {
+                console.log('user already exists');
+                //console.log(result[0]['COUNT(*)']);
+
+                return res.json(result[0]['COUNT(*)']);
+
+            } else {
+                return res.json(result[0]['COUNT(*)']);
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+    }
+
+    //return res.sendFile(path.join(__dirname + '/public/newuser.html'));
 });
 
 app.post('/login', (req, res) => {
@@ -118,7 +144,7 @@ app.post('/login', (req, res) => {
                 res.cookie('username', req.body.username);
 
                 return res.redirect('/lists');
-                
+
             } else {
                 console.log('invalid user');
 
@@ -134,21 +160,48 @@ app.post('/login', (req, res) => {
 
 app.post('/newuser', async (req, res) => {
 
-    if (req.body.username == ""){
+    if (req.body.username == "") {
         return res.redirect('/newuser');
     }
-    var sql = "INSERT INTO user (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
 
+    //check for acc with existing user first
+    var sql1 = "SELECT COUNT(*) FROM user WHERE username='" + req.body.username + "'";
     try {
-        config.query(sql, function (err, result) {
+
+        config.query(sql1, function (err, result) {
+
+            if (result[0]['COUNT(*)'] == 1) {
+                console.log('invalid user - username already in use');
+
+                //alert("Username is already in use, please pick a different username");
+
+                return res.redirect('/newuser');
+                //return res.send(500, 'showAlert');
+
+            } else {
+                //user with this username doesnt exist, make the account
+                var sql = "INSERT INTO user (username, password) VALUES ('" + req.body.username + "', '" + req.body.password + "')";
+
+                try {
+                    config.query(sql, function (err, result) {
+                    });
+                    console.log("account created")
+
+                } catch (error) {
+
+                    console.log(error);
+                }
+
+                return res.redirect('/');
+            }
         });
 
     } catch (error) {
-
         console.log(error);
     }
 
-    return res.redirect('/');
+
+
 });
 
 
@@ -184,7 +237,7 @@ app.post('/lists', async (req, res) => {
             AssocListID = data.currentListId;
             complete = 0;
 
-            if (data.taskStatus == false){
+            if (data.taskStatus == false) {
                 complete = 0;
             } else {
                 complete = 1;
@@ -197,12 +250,12 @@ app.post('/lists', async (req, res) => {
             });
         }
 
-        
+
         if (JSON.stringify(data).includes('statusChange')) {
             taskID = data.taskID;
             complete = 0;
 
-            if (data.statusChange == false){
+            if (data.statusChange == false) {
                 complete = 0;
             } else {
                 complete = 1;
@@ -216,7 +269,7 @@ app.post('/lists', async (req, res) => {
 
         }
 
-        
+
         if (JSON.stringify(data).includes('taskDeletionList')) {
             listID = data.taskDeletionList;
 

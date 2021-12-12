@@ -12,13 +12,85 @@
         </ul>
 
         <form action="/newuser" id="list-form" method="POST">
-            <input name="username" id="list-input" type="text" class="new list" placeholder="username" />
-            <input name="password" id="list-input" class="new list" type="password" placeholder="password" />
-            <button type="submit" class="listbutt">Create Account</button>
+            <input name="username" id="list-input" type="text" class="new list" placeholder="username"
+                onchange="checkUsers()" />
+            <input name="password" id="list-input-pass" class="new list" type="password" placeholder="password"
+                onchange="disableBtn()" />
+            <input name="password-confirm" id="list-input-pass-confirm" class="new list" type="password" placeholder="confirm password"
+            onchange="disableBtn()" />
+            <p style="font-size: 12px;">Password must contain at least 5 characters, one number, and both
+                upper & lower case letters</p>
+            <button type="submit" id="caBtn" class="listbutt" disabled="disabled">Create Account</button>
+            <p id="errtxt" style="font-size: 12px; color: maroon;">Please enter a password</p>
         </form>
+        <script>
+            function disableBtn() {
+                var pswd = document.getElementById("list-input-pass");
+                var pswdC = document.getElementById("list-input-pass-confirm");
+
+                if (pswd.value === "") {
+                    document.getElementById('caBtn').disabled = true;
+                    document.getElementById('errtxt').innerHTML = "Please enter a password";
+                }
+                else if (pswd.value.length < 5){ //|| pswd.value.length > 40) {
+                    document.getElementById('caBtn').disabled = true;
+                    document.getElementById('errtxt').innerHTML = "Password should be between 5 and 40 characters";
+                }
+                else if (pswd.value == pswd.value.toUpperCase() || pswd.value == pswd.value.toLowerCase()) {
+                    //== touppercase -> dsnt contian lowercase
+                    //== tolowercase -> dsnt contain uppercase
+
+                    document.getElementById('caBtn').disabled = true;
+                    document.getElementById('errtxt').innerHTML = "Password should have a combination of upper and lower case letters";
+                } else if (!hasNumber(pswd.value)) {
+                    document.getElementById('caBtn').disabled = true;
+                    document.getElementById('errtxt').innerHTML = "Password should contain a number";
+
+                } else if (pswd.value != pswdC.value){
+
+                    document.getElementById('caBtn').disabled = true;
+                    document.getElementById('errtxt').innerHTML = "Password confirmation does not match";
+                }
+                else {
+                    document.getElementById('caBtn').disabled = false;
+                    document.getElementById('errtxt').innerHTML = "";
+                }
+            }
+
+            async function checkUsers() {
+                const usr = document.getElementById('list-input').value;
+
+                const username = { usr };
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(username),
+                }
+
+                const response = await fetch('/checkusers', options);
+                const data = await response.json();
+
+                if (data == 1) {
+                    alert('This username is already in use, please choose another');
+                }
+            }
+
+            function hasNumber(string) {
+                return /\d/.test(string);
+                //referenced: https://thispointer.com/javascript-check-if-a-string-contains-numbers/
+            }
+
+            function pswdErr() {
+                alert('This password does not meet the requirements');
+            }
+        </script>
         <form action="/login" method="get">
-            <button name="loginbtn" class ="delete btn">Back</button>
+            <button name="loginbtn" class="delete btn">Back</button>
         </form>
+
     </div>
 </body>
 
