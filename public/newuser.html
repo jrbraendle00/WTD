@@ -34,7 +34,7 @@
                 }
                 else if (pswd.value.length < 5){ //|| pswd.value.length > 40) {
                     document.getElementById('caBtn').disabled = true;
-                    document.getElementById('errtxt').innerHTML = "Password should be between 5 and 40 characters";
+                    document.getElementById('errtxt').innerHTML = "Password should contain at least 5 characters";
                 }
                 else if (pswd.value == pswd.value.toUpperCase() || pswd.value == pswd.value.toLowerCase()) {
                     //== touppercase -> dsnt contian lowercase
